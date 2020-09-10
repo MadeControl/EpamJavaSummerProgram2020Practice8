@@ -37,9 +37,8 @@ public class DBManager {
         properties.load(fileReader);
 
         String urlDataBase = properties.getProperty(connectionUrl);
-        String user = properties.getProperty("user");
 
-        return DriverManager.getConnection(urlDataBase+user);
+        return DriverManager.getConnection(urlDataBase);
     }
 
     ////////// Methods for User
