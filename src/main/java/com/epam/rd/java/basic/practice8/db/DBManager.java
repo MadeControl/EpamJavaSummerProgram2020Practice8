@@ -25,14 +25,19 @@ public class DBManager {
         return dbManager;
     }
 
-    public Connection getConnection(String connectionUrl) throws SQLException, IOException {
+    public Connection getConnection(String connectionUrl) throws SQLException {
 
 
         Properties properties = new Properties();
         File file = new File(FILE_PROPERTIES);
-        FileReader fileReader = new FileReader(file);
+        FileReader fileReader = null;
 
-        properties.load(fileReader);
+        try {
+            fileReader = new FileReader(file);
+            properties.load(fileReader);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         String urlDataBase = properties.getProperty(connectionUrl);
 
@@ -57,7 +62,7 @@ public class DBManager {
             statement.close();
             connection.close();
 
-        } catch (SQLException | IOException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
 
