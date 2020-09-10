@@ -2,17 +2,20 @@ package com.epam.rd.java.basic.practice8.db;
 
 import com.epam.rd.java.basic.practice8.db.entity.Team;
 import com.epam.rd.java.basic.practice8.db.entity.User;
-
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.sql.*;
 import java.util.List;
 import java.util.Properties;
+import java.util.logging.Logger;
 
 public class DBManager {
 
+    private static final Logger LOGGER = Logger.getLogger(DBManager.class.getSimpleName());
     private static final String FILE_PROPERTIES = "app.properties";
+    private static final String CONNECTION_URL_KEY_IN_FILE_PROPERTIES = "connection.url";
+    private static final String CONNECTION_URL = getConnectionURL();
     private static DBManager dbManager;
 
     private DBManager() {
@@ -27,43 +30,28 @@ public class DBManager {
 
     public Connection getConnection(String connectionUrl) throws SQLException {
 
-
-        Properties properties = new Properties();
-        File file = new File(FILE_PROPERTIES);
-        FileReader fileReader = null;
-
         try {
-            fileReader = new FileReader(file);
-            properties.load(fileReader);
-        } catch (IOException e) {
-            e.printStackTrace();
+            Class.forName("com.mysql.cj.jdbc.Driver");
+        } catch (ClassNotFoundException e) {
+            LOGGER.warning(e.getMessage());
         }
 
-        String urlDataBase = properties.getProperty(connectionUrl);
-
-        return DriverManager.getConnection(urlDataBase);
+        return DriverManager.getConnection(connectionUrl);
     }
 
     ////////// Methods for User
 
     public void insertUser(User user){
 
-        Connection connection = null;
-        Statement statement = null;
-
-        try {
-            connection = getConnection("");
-            statement = connection.createStatement();
+        try(Connection connection = getConnection(CONNECTION_URL);
+            Statement statement = connection.createStatement() ) {
 
             String sqlQuery = "INSERT INTO practice8.users (login) VALUES ('" + user.getLogin() + "')";
 
             statement.execute(sqlQuery);
 
-            statement.close();
-            connection.close();
-
         } catch (SQLException e) {
-            e.printStackTrace();
+            LOGGER.warning(e.getMessage());
         }
 
     }
@@ -107,6 +95,23 @@ public class DBManager {
     }
 
     public void updateTeam(Team team) {
+
+    }
+
+    public static String getConnectionURL() {
+
+        Properties properties = new Properties();
+        File file = new File(FILE_PROPERTIES);
+
+        try(FileReader fileReader = new FileReader(file)) {
+
+            properties.load(fileReader);
+
+        } catch (IOException e) {
+            LOGGER.warning(e.getMessage());
+        }
+
+        return properties.getProperty(CONNECTION_URL_KEY_IN_FILE_PROPERTIES);
 
     }
 
