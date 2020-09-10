@@ -6,10 +6,7 @@ import com.epam.rd.java.basic.practice8.db.entity.User;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.List;
 import java.util.Properties;
 
@@ -29,6 +26,7 @@ public class DBManager {
     }
 
     public Connection getConnection(String connectionUrl) throws SQLException, IOException {
+
 
         Properties properties = new Properties();
         File file = new File(FILE_PROPERTIES);

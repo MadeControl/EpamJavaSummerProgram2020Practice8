@@ -4,6 +4,7 @@ import java.util.Objects;
 
 public class Team {
 
+    private long id;
     private String name;
 
     public Team() {
@@ -19,6 +20,14 @@ public class Team {
 
     public String getName() {
         return name;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     @Override

@@ -4,6 +4,7 @@ import java.util.Objects;
 
 public class User {
 
+    private long id;
     private String login;
 
     public User() {
@@ -20,6 +21,14 @@ public class User {
 
     public String getLogin() {
         return login;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     @Override
