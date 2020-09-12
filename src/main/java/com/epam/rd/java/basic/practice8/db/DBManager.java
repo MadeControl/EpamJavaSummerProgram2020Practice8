@@ -57,6 +57,32 @@ public class DBManager {
     }
 
     public User getUser(String login){
+
+        try(Connection connection = getConnection(CONNECTION_URL);
+            Statement statement = connection.createStatement() ) {
+
+            String sqlQuery = "SELECT * FROM users WHERE users.login="+login;
+
+            ResultSet resultSet = statement.executeQuery(sqlQuery);
+            User user = new User();
+
+            while (resultSet.next()) {
+
+                long userId = resultSet.getLong("id");
+                String userLogin = resultSet.getString("login");
+
+                user.setId(userId);
+                user.setLogin(userLogin);
+
+            }
+
+            resultSet.close();
+
+            return user;
+
+        } catch (SQLException e) {
+            LOGGER.warning(e.getMessage());
+        }
         return null;
     }
 
