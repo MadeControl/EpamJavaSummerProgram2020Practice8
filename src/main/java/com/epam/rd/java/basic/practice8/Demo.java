@@ -30,8 +30,6 @@ public class Demo {
 
         // users  ==> [ivanov, petrov, obama]
 
-        System.out.println("===========================");
-
         // Part 2
 
         dbManager.insertTeam(Team.createTeam("teamB"));
@@ -41,8 +39,6 @@ public class Demo {
         printList(dbManager.findAllTeams());
 
         // teams ==> [teamA, teamB, teamC]
-
-        System.out.println("===========================");
 
         // Part 3
 
@@ -71,8 +67,6 @@ public class Demo {
             System.out.println("~~~~~");
 
         }
-
-        System.out.println("===========================");
 
         // Part 4
 

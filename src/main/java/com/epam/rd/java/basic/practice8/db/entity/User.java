@@ -48,4 +48,11 @@ public class User {
 
         return Objects.equals(login, user.login);
     }
+
+    @Override
+    public int hashCode() {
+        int result = (int) (id ^ (id >>> 32));
+        result = 31 * result + (login != null ? login.hashCode() : 0);
+        return result;
+    }
 }

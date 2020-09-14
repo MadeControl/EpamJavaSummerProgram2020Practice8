@@ -48,4 +48,11 @@ public class Team {
 
         return Objects.equals(name, team.name);
     }
+
+    @Override
+    public int hashCode() {
+        int result = (int) (id ^ (id >>> 32));
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        return result;
+    }
 }

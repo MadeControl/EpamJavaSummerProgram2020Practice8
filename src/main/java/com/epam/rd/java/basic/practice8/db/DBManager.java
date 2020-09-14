@@ -31,13 +31,15 @@ public class DBManager {
     }
 
     public Connection getConnection(String connectionUrl) throws SQLException {
-
         return DriverManager.getConnection(connectionUrl);
     }
 
     ////////// Methods for User
 
     public void insertUser(User user){
+        if(user == null) {
+            return;
+        }
         try(Connection connection = getConnection(CONNECTION_URL);
             Statement statement = connection.createStatement() ) {
 
@@ -57,11 +59,19 @@ public class DBManager {
 
     public User getUser(String login){
 
+        if(login == null) {
+            return null;
+        }
+
+        ResultSet resultSet = null;
+
         try(Connection connection = getConnection(CONNECTION_URL);
             Statement statement = connection.createStatement() ) {
 
             String sqlQuery = "SELECT * FROM users WHERE users.login='"+login+"';";
-            ResultSet resultSet = statement.executeQuery(sqlQuery);
+
+            resultSet = statement.executeQuery(sqlQuery);
+
             User user = new User();
 
             while (resultSet.next()) {
@@ -79,20 +89,34 @@ public class DBManager {
             return user;
 
         } catch (SQLException e) {
+
             LOGGER.warning(e.getMessage());
+
+        } finally {
+
+            if(resultSet != null) {
+                try {
+                    resultSet.close();
+                } catch (SQLException e1) {
+                    LOGGER.warning(e1.getMessage());
+                }
+            }
         }
+
         return null;
     }
 
     public List<User> findAllUsers() {
 
         List<User> users = new ArrayList<>();
+        ResultSet resultSet = null;
 
         try(Connection connection = getConnection(CONNECTION_URL);
             Statement statement = connection.createStatement() ) {
 
             String sqlQuery = "SELECT * FROM users;";
-            ResultSet resultSet = statement.executeQuery(sqlQuery);
+
+            resultSet = statement.executeQuery(sqlQuery);
 
             while (resultSet.next()) {
 
@@ -114,13 +138,27 @@ public class DBManager {
 
         } catch (SQLException e) {
             LOGGER.warning(e.getMessage());
+        } finally {
+
+            if(resultSet != null) {
+                try {
+                    resultSet.close();
+                } catch (SQLException e1) {
+                    LOGGER.warning(e1.getMessage());
+                }
+            }
         }
+
         return users;
     }
 
     ////////// Methods for Team
 
     public void insertTeam(Team team) {
+
+        if(team == null) {
+            return;
+        }
 
         try(Connection connection = getConnection(CONNECTION_URL);
             Statement statement = connection.createStatement() ) {
@@ -129,76 +167,88 @@ public class DBManager {
 
             statement.executeUpdate(sqlQuery);
 
+            Team team1 = getTeam(team.getName());
+
+            team.setId(team1.getId());
+
         } catch (SQLException e) {
             LOGGER.warning(e.getMessage());
         }
     }
 
     public Team getTeam(String name) {
+
+        if(name == null) {
+            return null;
+        }
+
+        ResultSet resultSet = null;
+
         try(Connection connection = getConnection(CONNECTION_URL);
             Statement statement = connection.createStatement() ) {
 
             String sqlQuery = "SELECT * FROM teams WHERE teams.name='"+name+"';";
-            ResultSet resultSet = statement.executeQuery(sqlQuery);
-            Team team = new Team();
 
-            while (resultSet.next()) {
+            resultSet = statement.executeQuery(sqlQuery);
 
-                long teamId = resultSet.getLong("id");
-                String teamName = resultSet.getString("name");
-
-                team.setId(teamId);
-                team.setName(teamName);
-
-            }
-
-            resultSet.close();
-
-            return team;
+            return returnTeam(resultSet);
 
         } catch (SQLException e) {
             LOGGER.warning(e.getMessage());
+        } finally {
+
+            if(resultSet != null) {
+                try {
+                    resultSet.close();
+                } catch (SQLException e1) {
+                    LOGGER.warning(e1.getMessage());
+                }
+            }
         }
+
         return null;
     }
 
     public Team getTeamById(long id) {
+
+        ResultSet resultSet = null;
+
         try(Connection connection = getConnection(CONNECTION_URL);
             Statement statement = connection.createStatement() ) {
 
             String sqlQuery = "SELECT * FROM teams WHERE teams.id='"+id+"';";
-            ResultSet resultSet = statement.executeQuery(sqlQuery);
-            Team team = new Team();
 
-            while (resultSet.next()) {
+            resultSet = statement.executeQuery(sqlQuery);
 
-                long teamId = resultSet.getLong("id");
-                String teamName = resultSet.getString("name");
-
-                team.setId(teamId);
-                team.setName(teamName);
-
-            }
-
-            resultSet.close();
-
-            return team;
+            return returnTeam(resultSet);
 
         } catch (SQLException e) {
             LOGGER.warning(e.getMessage());
+        } finally {
+
+            if(resultSet != null) {
+                try {
+                    resultSet.close();
+                } catch (SQLException e1) {
+                    LOGGER.warning(e1.getMessage());
+                }
+            }
         }
+
         return null;
     }
 
     public List<Team> findAllTeams() {
 
         List<Team> teams = new ArrayList<>();
+        ResultSet resultSet = null;
 
         try(Connection connection = getConnection(CONNECTION_URL);
             Statement statement = connection.createStatement() ) {
 
             String sqlQuery = "SELECT * FROM teams;";
-            ResultSet resultSet = statement.executeQuery(sqlQuery);
+
+            resultSet = statement.executeQuery(sqlQuery);
 
             while (resultSet.next()) {
 
@@ -221,19 +271,34 @@ public class DBManager {
 
         } catch (SQLException e) {
             LOGGER.warning(e.getMessage());
+        } finally {
+
+            if(resultSet != null) {
+                try {
+                    resultSet.close();
+                } catch (SQLException e1) {
+                    LOGGER.warning(e1.getMessage());
+                }
+            }
         }
+
         return teams;
     }
 
     public List<Team> getUserTeams(User user) {
+        if(user == null) {
+            return new ArrayList<>();
+        }
 
         List<Team> userTeams = new ArrayList<>();
+        ResultSet resultSet = null;
 
         try(Connection connection = getConnection(CONNECTION_URL);
             Statement statement = connection.createStatement() ) {
 
             String sqlQuery = "SELECT * FROM users_teams WHERE user_id='" + user.getId()+"';";
-            ResultSet resultSet = statement.executeQuery(sqlQuery);
+
+            resultSet = statement.executeQuery(sqlQuery);
 
             while (resultSet.next()) {
 
@@ -250,11 +315,25 @@ public class DBManager {
 
         } catch (SQLException e) {
             LOGGER.warning(e.getMessage());
+        } finally {
+
+            if(resultSet != null) {
+                try {
+                    resultSet.close();
+                } catch (SQLException e1) {
+                    LOGGER.warning(e1.getMessage());
+                }
+            }
         }
+
         return userTeams;
     }
 
     public void setTeamsForUser(User user, Team... teams) {
+
+        if(user == null || teams == null) {
+            return;
+        }
 
         Connection connection = null;
         Statement statement = null;
@@ -308,6 +387,10 @@ public class DBManager {
 
     public void deleteTeam(Team team) {
 
+        if(team == null) {
+            return;
+        }
+
         try(Connection connection = getConnection(CONNECTION_URL);
             Statement statement = connection.createStatement() ) {
 
@@ -321,6 +404,10 @@ public class DBManager {
     }
 
     public void updateTeam(Team team) {
+
+        if(team == null) {
+            return;
+        }
 
         try(Connection connection = getConnection(CONNECTION_URL);
             Statement statement = connection.createStatement() ) {
@@ -349,6 +436,27 @@ public class DBManager {
 
         return properties.getProperty(CONNECTION_URL_KEY_IN_FILE_PROPERTIES);
 
+    }
+
+    public Team returnTeam(ResultSet resultSet) {
+
+        Team team = new Team();
+         try {
+             while (resultSet.next()) {
+
+                 long teamId = resultSet.getLong("id");
+                 String teamName = resultSet.getString("name");
+
+                 team.setId(teamId);
+                 team.setName(teamName);
+
+             }
+             return team;
+         } catch (SQLException e) {
+             LOGGER.warning(e.getMessage());
+         }
+
+         return null;
     }
 
 }
