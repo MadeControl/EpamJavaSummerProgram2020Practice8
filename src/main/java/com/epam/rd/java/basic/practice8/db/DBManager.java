@@ -42,7 +42,7 @@ public class DBManager {
 
             String sqlQuery = "";
 
-            if(user.getLogin() == null) {
+            if(user.getLogin() != null) {
                 sqlQuery = "INSERT INTO users (login) VALUES ('" + user.getLogin() + "');";
             }
 
@@ -60,16 +60,16 @@ public class DBManager {
 
     public User getUser(String login){
 
-        if(login == null) {
-            return null;
-        }
-
         ResultSet resultSet = null;
 
         try(Connection connection = getConnection(CONNECTION_URL);
             Statement statement = connection.createStatement() ) {
 
-            String sqlQuery = "SELECT * FROM users WHERE users.login='"+login+"';";
+            String sqlQuery = "";
+
+            if(login != null) {
+                sqlQuery = "SELECT * FROM users WHERE users.login='" + login + "';";
+            }
 
             resultSet = statement.executeQuery(sqlQuery);
 
@@ -157,14 +157,14 @@ public class DBManager {
 
     public void insertTeam(Team team) {
 
-        if(team == null) {
-            return;
-        }
-
         try(Connection connection = getConnection(CONNECTION_URL);
             Statement statement = connection.createStatement() ) {
 
-            String sqlQuery = "INSERT INTO teams (name) VALUES ('" + team.getName() + "');";
+            String sqlQuery = "";
+
+            if(team.getName() != null) {
+                sqlQuery = "INSERT INTO teams (name) VALUES ('" + team.getName() + "');";
+            }
 
             statement.executeUpdate(sqlQuery);
 
@@ -179,16 +179,16 @@ public class DBManager {
 
     public Team getTeam(String name) {
 
-        if(name == null) {
-            return null;
-        }
-
         ResultSet resultSet = null;
 
         try(Connection connection = getConnection(CONNECTION_URL);
             Statement statement = connection.createStatement() ) {
 
-            String sqlQuery = "SELECT * FROM teams WHERE teams.name='"+name+"';";
+            String sqlQuery = "";
+
+            if(name != null) {
+                sqlQuery = "SELECT * FROM teams WHERE teams.name='"+name+"';";
+            }
 
             resultSet = statement.executeQuery(sqlQuery);
 
@@ -287,9 +287,6 @@ public class DBManager {
     }
 
     public List<Team> getUserTeams(User user) {
-        if(user == null) {
-            return new ArrayList<>();
-        }
 
         List<Team> userTeams = new ArrayList<>();
         ResultSet resultSet = null;
@@ -297,7 +294,11 @@ public class DBManager {
         try(Connection connection = getConnection(CONNECTION_URL);
             Statement statement = connection.createStatement() ) {
 
-            String sqlQuery = "SELECT * FROM users_teams WHERE user_id='" + user.getId()+"';";
+            String sqlQuery = "";
+
+            if(user != null) {
+                sqlQuery = "SELECT * FROM users_teams WHERE user_id='" + user.getId()+"';";
+            }
 
             resultSet = statement.executeQuery(sqlQuery);
 
@@ -332,10 +333,6 @@ public class DBManager {
 
     public void setTeamsForUser(User user, Team... teams) {
 
-        if(user == null || teams == null) {
-            return;
-        }
-
         Connection connection = null;
         Statement statement = null;
         Savepoint savepoint = null;
@@ -349,8 +346,12 @@ public class DBManager {
 
             for(Team team : teams) {
 
-                String sqlQuery = "INSERT INTO users_teams (user_id, team_id) " +
-                        "VALUES ('" + user.getId() + "','" + team.getId() + "');";
+                String sqlQuery = "";
+
+                if(user != null && team != null) {
+                    sqlQuery = "INSERT INTO users_teams (user_id, team_id) " +
+                            "VALUES ('" + user.getId() + "','" + team.getId() + "');";
+                }
 
                 statement.executeUpdate(sqlQuery);
 
@@ -388,14 +389,14 @@ public class DBManager {
 
     public void deleteTeam(Team team) {
 
-        if(team == null) {
-            return;
-        }
-
         try(Connection connection = getConnection(CONNECTION_URL);
             Statement statement = connection.createStatement() ) {
 
-            String sqlQuery = "DELETE FROM teams WHERE teams.name='" + team.getName()+"';";
+            String sqlQuery = "";
+
+            if(team != null) {
+                sqlQuery = "DELETE FROM teams WHERE teams.name='" + team.getName()+"';";
+            }
 
             statement.executeUpdate(sqlQuery);
 
@@ -406,14 +407,15 @@ public class DBManager {
 
     public void updateTeam(Team team) {
 
-        if(team == null) {
-            return;
-        }
-
         try(Connection connection = getConnection(CONNECTION_URL);
             Statement statement = connection.createStatement() ) {
 
-            String sqlQuery = "UPDATE teams SET teams.name='" + team.getName() + "' WHERE teams.id='" + team.getId()+"';";
+            String sqlQuery = "";
+
+            if(team != null) {
+                sqlQuery = "UPDATE teams SET teams.name='" + team.getName()
+                        + "' WHERE teams.id='" + team.getId()+"';";
+            }
 
             statement.executeUpdate(sqlQuery);
 
