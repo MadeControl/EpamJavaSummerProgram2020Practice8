@@ -17,7 +17,7 @@ public class DBManager {
     private static final Logger LOGGER = Logger.getLogger(DBManager.class.getSimpleName());
     private static final String FILE_PROPERTIES = "app.properties";
     private static final String CONNECTION_URL_KEY_IN_FILE_PROPERTIES = "connection.url";
-    private static final String CONNECTION_URL = getConnectionURLFromFileProperties();
+    private static final String CONNECTION_URL = getConnectionURLFromFileProperties(FILE_PROPERTIES);
 
     private static DBManager dbManager;
 
@@ -403,10 +403,10 @@ public class DBManager {
         }
     }
 
-    public static String getConnectionURLFromFileProperties() {
+    public static String getConnectionURLFromFileProperties(String fileName) {
 
         Properties properties = new Properties();
-        File file = new File(FILE_PROPERTIES);
+        File file = new File(fileName);
 
         try (FileReader fileReader = new FileReader(file)) {
 
