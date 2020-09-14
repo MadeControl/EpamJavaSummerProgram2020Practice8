@@ -16,7 +16,9 @@ public class DBManager {
     private static final Logger LOGGER = Logger.getLogger(DBManager.class.getSimpleName());
     private static final String FILE_PROPERTIES = "app.properties";
     private static final String CONNECTION_URL_KEY_IN_FILE_PROPERTIES = "connection.url";
-    private static final String CONNECTION_URL = getConnectionURLFromFileProperties();
+//    private static final String CONNECTION_URL = getConnectionURLFromFileProperties();
+    private static final String CONNECTION_URL = "jdbc:mysql://localhost:3306/practice8?user=root&password=Rerecz_200113&useUnicode=true&serverTimezone=UTC";
+
     private static DBManager dbManager;
 
     private DBManager() {
@@ -31,11 +33,11 @@ public class DBManager {
 
     public Connection getConnection(String connectionUrl) throws SQLException {
 
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-        } catch (ClassNotFoundException e) {
-            LOGGER.warning(e.getMessage());
-        }
+//        try {
+//            Class.forName("com.mysql.cj.jdbc.Driver");
+//        } catch (ClassNotFoundException e) {
+//            LOGGER.warning(e.getMessage());
+//        }
 
         return DriverManager.getConnection(connectionUrl);
     }
@@ -61,7 +63,7 @@ public class DBManager {
         try(Connection connection = getConnection(CONNECTION_URL);
             Statement statement = connection.createStatement() ) {
 
-            String sqlQuery = "SELECT * FROM users WHERE users.login="+login+";";
+            String sqlQuery = "SELECT * FROM users WHERE users.login='"+login+"';";
             ResultSet resultSet = statement.executeQuery(sqlQuery);
             User user = new User();
 
@@ -139,7 +141,7 @@ public class DBManager {
         try(Connection connection = getConnection(CONNECTION_URL);
             Statement statement = connection.createStatement() ) {
 
-            String sqlQuery = "SELECT * FROM teams WHERE teams.name="+name+";";
+            String sqlQuery = "SELECT * FROM teams WHERE teams.name='"+name+"';";
             ResultSet resultSet = statement.executeQuery(sqlQuery);
             Team team = new Team();
 
@@ -241,13 +243,14 @@ public class DBManager {
         try {
 
             connection = getConnection(CONNECTION_URL);
+            connection.setAutoCommit(false);
             statement = connection.createStatement();
             savepoint = connection.setSavepoint("SavePointOne");
 
             for(Team team : teams) {
 
                 String sqlQuery = "INSERT INTO users_teams (user_id, team_id) " +
-                        "VALUES ('" + user.getId() + ", " + team.getId() + "');";
+                        "VALUES ('" + user.getId() + "," + team.getId() + "');";
 
                 statement.executeUpdate(sqlQuery);
 
@@ -288,7 +291,7 @@ public class DBManager {
         try(Connection connection = getConnection(CONNECTION_URL);
             Statement statement = connection.createStatement() ) {
 
-            String sqlQuery = "DELETE FROM teams WHERE teams.name=" + team.getName()+";";
+            String sqlQuery = "DELETE FROM teams WHERE teams.name='" + team.getName()+"';";
 
             statement.executeUpdate(sqlQuery);
 
@@ -302,7 +305,7 @@ public class DBManager {
         try(Connection connection = getConnection(CONNECTION_URL);
             Statement statement = connection.createStatement() ) {
 
-            String sqlQuery = "UPDATE teams SET teams.name=" + team.getName() + " WHERE teams.id=" + team.getId()+";";
+            String sqlQuery = "UPDATE teams SET teams.name='" + team.getName() + "' WHERE teams.id='" + team.getId()+"';";
 
             statement.executeUpdate(sqlQuery);
 
@@ -327,5 +330,11 @@ public class DBManager {
         return properties.getProperty(CONNECTION_URL_KEY_IN_FILE_PROPERTIES);
 
     }
+
+//    public Connection getConnection(String connectionUrl) throws SQLException {
+//
+//        Connection connection =
+//        return DriverManager.getConnection(connectionUrl);
+//    }
 
 }
