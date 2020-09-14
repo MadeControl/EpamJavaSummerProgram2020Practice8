@@ -2,6 +2,7 @@ package com.epam.rd.java.basic.practice8.db;
 
 import com.epam.rd.java.basic.practice8.db.entity.Team;
 import com.epam.rd.java.basic.practice8.db.entity.User;
+
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -24,7 +25,7 @@ public class DBManager {
     }
 
     public static DBManager getInstance() {
-        if(dbManager == null) {
+        if (dbManager == null) {
             dbManager = new DBManager();
         }
         return dbManager;
@@ -36,13 +37,13 @@ public class DBManager {
 
     ////////// Methods for User
 
-    public void insertUser(User user){
-        try(Connection connection = getConnection(CONNECTION_URL);
-            Statement statement = connection.createStatement() ) {
+    public void insertUser(User user) {
+        try (Connection connection = getConnection(CONNECTION_URL);
+             Statement statement = connection.createStatement()) {
 
             String sqlQuery = "";
 
-            if(user.getLogin() != null) {
+            if (user.getLogin() != null) {
                 sqlQuery = "INSERT INTO users (login) VALUES ('" + user.getLogin() + "');";
             }
 
@@ -58,16 +59,16 @@ public class DBManager {
 
     }
 
-    public User getUser(String login){
+    public User getUser(String login) {
 
         ResultSet resultSet = null;
 
-        try(Connection connection = getConnection(CONNECTION_URL);
-            Statement statement = connection.createStatement() ) {
+        try (Connection connection = getConnection(CONNECTION_URL);
+             Statement statement = connection.createStatement()) {
 
             String sqlQuery = "";
 
-            if(login != null) {
+            if (login != null) {
                 sqlQuery = "SELECT * FROM users WHERE users.login='" + login + "';";
             }
 
@@ -95,7 +96,7 @@ public class DBManager {
 
         } finally {
 
-            if(resultSet != null) {
+            if (resultSet != null) {
                 try {
                     resultSet.close();
                 } catch (SQLException e1) {
@@ -112,8 +113,8 @@ public class DBManager {
         List<User> users = new ArrayList<>();
         ResultSet resultSet = null;
 
-        try(Connection connection = getConnection(CONNECTION_URL);
-            Statement statement = connection.createStatement() ) {
+        try (Connection connection = getConnection(CONNECTION_URL);
+             Statement statement = connection.createStatement()) {
 
             String sqlQuery = "SELECT * FROM users;";
 
@@ -141,7 +142,7 @@ public class DBManager {
             LOGGER.warning(e.getMessage());
         } finally {
 
-            if(resultSet != null) {
+            if (resultSet != null) {
                 try {
                     resultSet.close();
                 } catch (SQLException e1) {
@@ -157,12 +158,12 @@ public class DBManager {
 
     public void insertTeam(Team team) {
 
-        try(Connection connection = getConnection(CONNECTION_URL);
-            Statement statement = connection.createStatement() ) {
+        try (Connection connection = getConnection(CONNECTION_URL);
+             Statement statement = connection.createStatement()) {
 
             String sqlQuery = "";
 
-            if(team.getName() != null) {
+            if (team.getName() != null) {
                 sqlQuery = "INSERT INTO teams (name) VALUES ('" + team.getName() + "');";
             }
 
@@ -179,32 +180,19 @@ public class DBManager {
 
     public Team getTeam(String name) {
 
-        ResultSet resultSet = null;
-
-        try(Connection connection = getConnection(CONNECTION_URL);
-            Statement statement = connection.createStatement() ) {
+        try (Connection connection = getConnection(CONNECTION_URL);
+             Statement statement = connection.createStatement()) {
 
             String sqlQuery = "";
 
-            if(name != null) {
-                sqlQuery = "SELECT * FROM teams WHERE teams.name='"+name+"';";
+            if (name != null) {
+                sqlQuery = "SELECT * FROM teams WHERE teams.name='" + name + "';";
             }
 
-            resultSet = statement.executeQuery(sqlQuery);
-
-            return returnTeam(resultSet);
+            return returnTeam(statement, sqlQuery);
 
         } catch (SQLException e) {
             LOGGER.warning(e.getMessage());
-        } finally {
-
-            if(resultSet != null) {
-                try {
-                    resultSet.close();
-                } catch (SQLException e1) {
-                    LOGGER.warning(e1.getMessage());
-                }
-            }
         }
 
         return null;
@@ -212,28 +200,19 @@ public class DBManager {
 
     public Team getTeamById(long id) {
 
-        ResultSet resultSet = null;
+        try (Connection connection = getConnection(CONNECTION_URL);
+             Statement statement = connection.createStatement()) {
 
-        try(Connection connection = getConnection(CONNECTION_URL);
-            Statement statement = connection.createStatement() ) {
+            String sqlQuery = "";
 
-            String sqlQuery = "SELECT * FROM teams WHERE teams.id='"+id+"';";
+            if (id >= 0) {
+                sqlQuery = "SELECT * FROM teams WHERE teams.id='" + id + "';";
+            }
 
-            resultSet = statement.executeQuery(sqlQuery);
-
-            return returnTeam(resultSet);
+            return returnTeam(statement, sqlQuery);
 
         } catch (SQLException e) {
             LOGGER.warning(e.getMessage());
-        } finally {
-
-            if(resultSet != null) {
-                try {
-                    resultSet.close();
-                } catch (SQLException e1) {
-                    LOGGER.warning(e1.getMessage());
-                }
-            }
         }
 
         return null;
@@ -244,8 +223,8 @@ public class DBManager {
         List<Team> teams = new ArrayList<>();
         ResultSet resultSet = null;
 
-        try(Connection connection = getConnection(CONNECTION_URL);
-            Statement statement = connection.createStatement() ) {
+        try (Connection connection = getConnection(CONNECTION_URL);
+             Statement statement = connection.createStatement()) {
 
             String sqlQuery = "SELECT * FROM teams;";
 
@@ -274,7 +253,7 @@ public class DBManager {
             LOGGER.warning(e.getMessage());
         } finally {
 
-            if(resultSet != null) {
+            if (resultSet != null) {
                 try {
                     resultSet.close();
                 } catch (SQLException e1) {
@@ -291,13 +270,13 @@ public class DBManager {
         List<Team> userTeams = new ArrayList<>();
         ResultSet resultSet = null;
 
-        try(Connection connection = getConnection(CONNECTION_URL);
-            Statement statement = connection.createStatement() ) {
+        try (Connection connection = getConnection(CONNECTION_URL);
+             Statement statement = connection.createStatement()) {
 
             String sqlQuery = "";
 
-            if(user != null) {
-                sqlQuery = "SELECT * FROM users_teams WHERE user_id='" + user.getId()+"';";
+            if (user != null) {
+                sqlQuery = "SELECT * FROM users_teams WHERE user_id='" + user.getId() + "';";
             }
 
             resultSet = statement.executeQuery(sqlQuery);
@@ -319,7 +298,7 @@ public class DBManager {
             LOGGER.warning(e.getMessage());
         } finally {
 
-            if(resultSet != null) {
+            if (resultSet != null) {
                 try {
                     resultSet.close();
                 } catch (SQLException e1) {
@@ -344,11 +323,11 @@ public class DBManager {
             statement = connection.createStatement();
             savepoint = connection.setSavepoint("SavePointOne");
 
-            for(Team team : teams) {
+            for (Team team : teams) {
 
                 String sqlQuery = "";
 
-                if(user != null && team != null) {
+                if (user != null && team != null) {
                     sqlQuery = "INSERT INTO users_teams (user_id, team_id) " +
                             "VALUES ('" + user.getId() + "','" + team.getId() + "');";
                 }
@@ -361,7 +340,7 @@ public class DBManager {
 
         } catch (SQLException e) {
 
-            if(connection != null) {
+            if (connection != null) {
                 try {
                     connection.rollback(savepoint);
                 } catch (SQLException e2) {
@@ -374,10 +353,10 @@ public class DBManager {
         } finally {
 
             try {
-                if(statement != null) {
+                if (statement != null) {
                     statement.close();
                 }
-                if(connection != null) {
+                if (connection != null) {
                     connection.close();
                 }
             } catch (SQLException e3) {
@@ -389,13 +368,13 @@ public class DBManager {
 
     public void deleteTeam(Team team) {
 
-        try(Connection connection = getConnection(CONNECTION_URL);
-            Statement statement = connection.createStatement() ) {
+        try (Connection connection = getConnection(CONNECTION_URL);
+             Statement statement = connection.createStatement()) {
 
             String sqlQuery = "";
 
-            if(team != null) {
-                sqlQuery = "DELETE FROM teams WHERE teams.name='" + team.getName()+"';";
+            if (team != null) {
+                sqlQuery = "DELETE FROM teams WHERE teams.name='" + team.getName() + "';";
             }
 
             statement.executeUpdate(sqlQuery);
@@ -407,14 +386,14 @@ public class DBManager {
 
     public void updateTeam(Team team) {
 
-        try(Connection connection = getConnection(CONNECTION_URL);
-            Statement statement = connection.createStatement() ) {
+        try (Connection connection = getConnection(CONNECTION_URL);
+             Statement statement = connection.createStatement()) {
 
             String sqlQuery = "";
 
-            if(team != null) {
+            if (team != null) {
                 sqlQuery = "UPDATE teams SET teams.name='" + team.getName()
-                        + "' WHERE teams.id='" + team.getId()+"';";
+                        + "' WHERE teams.id='" + team.getId() + "';";
             }
 
             statement.executeUpdate(sqlQuery);
@@ -429,7 +408,7 @@ public class DBManager {
         Properties properties = new Properties();
         File file = new File(FILE_PROPERTIES);
 
-        try(FileReader fileReader = new FileReader(file)) {
+        try (FileReader fileReader = new FileReader(file)) {
 
             properties.load(fileReader);
 
@@ -441,25 +420,41 @@ public class DBManager {
 
     }
 
-    public Team returnTeam(ResultSet resultSet) {
+    public Team returnTeam(Statement statement, String query) {
 
         Team team = new Team();
-         try {
-             while (resultSet.next()) {
+        ResultSet resultSet = null;
 
-                 long teamId = resultSet.getLong("id");
-                 String teamName = resultSet.getString("name");
+        try {
 
-                 team.setId(teamId);
-                 team.setName(teamName);
+            resultSet = statement.executeQuery(query);
 
-             }
-             return team;
-         } catch (SQLException e) {
-             LOGGER.warning(e.getMessage());
-         }
+            while (resultSet.next()) {
 
-         return null;
+                long teamId = resultSet.getLong("id");
+                String teamName = resultSet.getString("name");
+
+                team.setId(teamId);
+                team.setName(teamName);
+
+            }
+
+            return team;
+
+        } catch (SQLException e) {
+            LOGGER.warning(e.getMessage());
+        } finally {
+
+            if (resultSet != null) {
+                try {
+                    resultSet.close();
+                } catch (SQLException e1) {
+                    LOGGER.warning(e1.getMessage());
+                }
+            }
+        }
+
+        return null;
     }
 
 }
