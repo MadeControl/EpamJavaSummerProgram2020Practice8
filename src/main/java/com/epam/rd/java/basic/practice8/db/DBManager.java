@@ -16,8 +16,7 @@ public class DBManager {
     private static final Logger LOGGER = Logger.getLogger(DBManager.class.getSimpleName());
     private static final String FILE_PROPERTIES = "app.properties";
     private static final String CONNECTION_URL_KEY_IN_FILE_PROPERTIES = "connection.url";
-//    private static final String CONNECTION_URL = getConnectionURLFromFileProperties();
-    private static final String CONNECTION_URL = "jdbc:mysql://localhost:3306/practice8?user=root&password=Rerecz_200113&useUnicode=true&serverTimezone=UTC";
+    private static final String CONNECTION_URL = getConnectionURLFromFileProperties();
 
     private static DBManager dbManager;
 
@@ -165,6 +164,35 @@ public class DBManager {
         return null;
     }
 
+    public Team getTeamById(long id) {
+        try(Connection connection = getConnection(CONNECTION_URL);
+            Statement statement = connection.createStatement() ) {
+
+            String sqlQuery = "SELECT * FROM teams WHERE teams.id='"+id+"';";
+            ResultSet resultSet = statement.executeQuery(sqlQuery);
+            Team team = new Team();
+
+            while (resultSet.next()) {
+
+                long teamId = resultSet.getLong("id");
+                String teamName = resultSet.getString("name");
+
+                team.setId(teamId);
+                team.setName(teamName);
+
+            }
+
+            resultSet.close();
+
+            return team;
+
+        } catch (SQLException e) {
+            LOGGER.warning(e.getMessage());
+        }
+        return null;
+    }
+
+
     public List<Team> findAllTeams() {
 
         List<Team> teams = new ArrayList<>();
@@ -207,18 +235,13 @@ public class DBManager {
         try(Connection connection = getConnection(CONNECTION_URL);
             Statement statement = connection.createStatement() ) {
 
-            String sqlQuery = "SELECT * FROM users_teams WHERE users_teams.user_id=" + user.getId()+";";
+            String sqlQuery = "SELECT * FROM users_teams WHERE user_id='" + user.getId()+"';";
             ResultSet resultSet = statement.executeQuery(sqlQuery);
 
             while (resultSet.next()) {
 
-                long teamId = resultSet.getLong("id");
-                String teamName = resultSet.getString("name");
-
-                Team team = new Team();
-
-                team.setId(teamId);
-                team.setName(teamName);
+                long teamId = resultSet.getLong("team_id");
+                Team team = getTeamById(teamId);
 
                 userTeams.add(team);
 
@@ -250,7 +273,7 @@ public class DBManager {
             for(Team team : teams) {
 
                 String sqlQuery = "INSERT INTO users_teams (user_id, team_id) " +
-                        "VALUES ('" + user.getId() + "," + team.getId() + "');";
+                        "VALUES ('" + user.getId() + "','" + team.getId() + "');";
 
                 statement.executeUpdate(sqlQuery);
 
@@ -330,11 +353,5 @@ public class DBManager {
         return properties.getProperty(CONNECTION_URL_KEY_IN_FILE_PROPERTIES);
 
     }
-
-//    public Connection getConnection(String connectionUrl) throws SQLException {
-//
-//        Connection connection =
-//        return DriverManager.getConnection(connectionUrl);
-//    }
 
 }
