@@ -41,10 +41,13 @@ public class DBManager {
         try(Connection connection = getConnection(CONNECTION_URL);
             Statement statement = connection.createStatement() ) {
 
-            String sqlQuery = "INSERT INTO users (id, login) VALUES ('" + user.getId()
-                    + "','" + user.getLogin() + "');";
+            String sqlQuery = "INSERT INTO users (login) VALUES ('" + user.getLogin() + "');";
 
             statement.executeUpdate(sqlQuery);
+
+            User user1 = getUser(user.getLogin());
+
+            user.setId(user1.getId());
 
         } catch (SQLException e) {
             LOGGER.warning(e.getMessage());
