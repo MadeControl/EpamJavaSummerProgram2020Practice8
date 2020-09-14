@@ -37,13 +37,14 @@ public class DBManager {
     ////////// Methods for User
 
     public void insertUser(User user){
-        if(user == null) {
-            return;
-        }
         try(Connection connection = getConnection(CONNECTION_URL);
             Statement statement = connection.createStatement() ) {
 
-            String sqlQuery = "INSERT INTO users (login) VALUES ('" + user.getLogin() + "');";
+            String sqlQuery = "";
+
+            if(user.getLogin() == null) {
+                sqlQuery = "INSERT INTO users (login) VALUES ('" + user.getLogin() + "');";
+            }
 
             statement.executeUpdate(sqlQuery);
 
