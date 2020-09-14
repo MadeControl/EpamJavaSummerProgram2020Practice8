@@ -43,7 +43,6 @@ public class DBManager {
     ////////// Methods for User
 
     public void insertUser(User user){
-
         try(Connection connection = getConnection(CONNECTION_URL);
             Statement statement = connection.createStatement() ) {
 
