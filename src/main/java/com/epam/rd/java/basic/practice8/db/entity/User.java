@@ -18,7 +18,6 @@ public class User {
         return new User(login);
     }
 
-
     public String getLogin() {
         return login;
     }

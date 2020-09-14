@@ -32,12 +32,6 @@ public class DBManager {
 
     public Connection getConnection(String connectionUrl) throws SQLException {
 
-//        try {
-//            Class.forName("com.mysql.cj.jdbc.Driver");
-//        } catch (ClassNotFoundException e) {
-//            LOGGER.warning(e.getMessage());
-//        }
-
         return DriverManager.getConnection(connectionUrl);
     }
 
@@ -47,7 +41,8 @@ public class DBManager {
         try(Connection connection = getConnection(CONNECTION_URL);
             Statement statement = connection.createStatement() ) {
 
-            String sqlQuery = "INSERT INTO users (login) VALUES ('" + user.getLogin() + "');";
+            String sqlQuery = "INSERT INTO users (id, login) VALUES ('" + user.getId()
+                    + "','" + user.getLogin() + "');";
 
             statement.executeUpdate(sqlQuery);
 
@@ -191,7 +186,6 @@ public class DBManager {
         }
         return null;
     }
-
 
     public List<Team> findAllTeams() {
 
